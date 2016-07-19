@@ -69,7 +69,18 @@ Todo:
     <script src="js/ui-cookies.js?0.5.0" charset="utf-8"></script>
     <script src="js/ui-worker.js?0.5.0" charset="utf-8"></script>
     <script src="js/index.js?0.5.0" charset="utf-8"></script>
-
+    <script src="blockly-master/blockly_compressed.js"></script>
+    <script src="blockly-master/blocks_compressed.js"></script>
+    <script src="blockly-master/msg/js/en.js"></script>
+    <xml id="toolbox" style="display: none">
+      <block type="controls_if"></block>
+      <block type="controls_repeat_ext"></block>
+      <block type="logic_compare"></block>
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </xml>
 <!-- top left header (logo and error message) -->
     <div id="header">
       <img src="imgs/title.png">
@@ -152,29 +163,14 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
         <br/><a class="okButton" href='#' onclick="$('#about').hide(); return false;"> OK </a>
       </p>
     </div> <!-- about -->
-
-<!-- editor -->
     <div id="editFrame">
       <div>
-        <img id="editHandle" src="imgs/editHandleIn.png"></img>
+        <img id="editHandle" src="imgs/editHandleIn.png" />
       </div>
-      <div id="editor">
-// -- OpenJSCAD.org logo
-
-function main() {
-   return union(
-      difference(
-         cube({size: 3, center: true}),
-         sphere({r:2, center: true})
-      ),
-      intersection(
-          sphere({r: 1.3, center: true}),
-          cube({size: 2.1, center: true})
-      )
-   ).translate([0,0,1.5]).scale(10);
-}
+      <div id="editor-blockly" style="display:block;height:100%;width:100%;">
       </div>
-    </div> <!-- editor -->
+    </div>
+<!-- editor -->
 
 <!-- design viewer -->
     <div oncontextmenu="return false;" id="viewerContext"></div> <!-- avoiding popup when right mouse is clicked -->
@@ -214,5 +210,23 @@ function main() {
     <div id="footer">
       OpenJSCAD.org <script>document.write(OpenJsCad.version);</script>, MIT License, get your own copy/clone/fork from <a target=_blank href="https://github.com/Spiritdude/OpenJSCAD.org">GitHub: OpenJSCAD</a>
     </div>
+<script>
+  var blocklyDiv = document.getElementById('editor-blockly');
+  var workspace = Blockly.inject(blocklyDiv,
+          {toolbox: document.getElementById('toolbox'),
+            grid:
+            {spacing: 20,
+              length: 3,
+              colour: '#ccc',
+              snap: true},
+            zoom:
+            {controls: true,
+              wheel: true,
+              startScale: 1.0,
+              maxScale: 3,
+              minScale: 0.3,
+              scaleSpeed: 1.2},
+            trashcan: true});
+</script>
   </body>
 </html>
