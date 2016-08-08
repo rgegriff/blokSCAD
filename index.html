@@ -71,6 +71,9 @@ Todo:
     <script src="js/index.js?0.5.0" charset="utf-8"></script>
     <script src="blockly-master/blockly_compressed.js"></script>
     <script src="blockly-master/blocks_compressed.js"></script>
+    <script src="blockly-master/javascript_compressed.js"></script>
+    <script src="blokscad_blocks.js"></script>
+    <script src="blokscad_generators.js"></script>
     <script src="blockly-master/msg/js/en.js"></script>
     <xml id="toolbox" style="display: none">
       <block type="controls_if"></block>
@@ -80,6 +83,8 @@ Todo:
       <block type="math_arithmetic"></block>
       <block type="text"></block>
       <block type="text_print"></block>
+      <block type="blokscad_square"></block>
+      <block type="blokscad_union"></block>
     </xml>
 <!-- top left header (logo and error message) -->
     <div id="header">
@@ -212,7 +217,7 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
     </div>
 <script>
   var blocklyDiv = document.getElementById('editor-blockly');
-  var workspace = Blockly.inject(blocklyDiv,
+  workspace = Blockly.inject(blocklyDiv,
           {toolbox: document.getElementById('toolbox'),
             grid:
             {spacing: 20,
