@@ -113,14 +113,15 @@ var toolbox_xml = "\
     </category>\
     \
     <category name=\"3D Shapes\" colour=\"200\">\
-        <block type=\"blokscad_sphere\"></block>\
+        <block type=\"blokscad_sphere\" disabled=\"true\"></block>\
     </category>\
     <category name=\"Transforms\" colour=\"200\">\
       <block type=\"blokscad_union\"></block>\
       <block type=\"blokscad_difference\"></block>\
       <block type=\"blokscad_intersection\"></block>\
       <sep gap=\"34\"></sep>\
-      <block type=\"blokscad_translate3d\"></block>\
+      <block type=\"blokscad_translate3d\" disabled=\"true\"></block>\
       <block type=\"blokscad_translate2d\"></block>\
+      <block type=\"blokscad_rotate2d\"></block>\
     </category>\
 </xml>"

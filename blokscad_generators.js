@@ -109,6 +109,23 @@ Blockly.JavaScript['blokscad_translate2d'] = function(block) {
     return code;
 };
 
+Blockly.JavaScript['blokscad_rotate2d'] = function(block) {
+    var number_degrees = block.getFieldValue('degrees');
+    var value_degrees = Blockly.JavaScript.valueToCode(block, 'degrees', Blockly.JavaScript.ORDER_ATOMIC);
+
+    //Collect whichever variable the user has set
+    var degrees = value_degrees  == ""? number_degrees : value_degrees ;
+
+    var statements_shape = Blockly.JavaScript.statementToCode(block, 'Shape');
+    var shape_code = statements_shape
+        .split(';\n')
+        .map(function(a){return a.trim();})
+        .filter(function (a){return a!="";});
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'rotate([' + 0 + ', ' + 0 + ', ' + degrees + '], ' + shape_code + ');\n';
+    return code;
+};
+
 Blockly.JavaScript['blokscad_polygon'] = function(block) {
     var value_points = Blockly.JavaScript.valueToCode(block, 'POINTS', Blockly.JavaScript.ORDER_ATOMIC);
     // TODO: Assemble JavaScript into code variable.

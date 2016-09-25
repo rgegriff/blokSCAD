@@ -145,6 +145,26 @@ Blockly.Blocks['blokscad_translate2d'] = {
     }
 };
 
+Blockly.Blocks['blokscad_rotate2d'] = {
+    init: function() {
+        this.appendDummyInput()
+            .setAlign(Blockly.ALIGN_CENTRE)
+            .appendField("Rotate 2D");
+        this.appendValueInput("degrees")
+            .setCheck("Number")
+            .appendField("degrees")
+            .appendField(new Blockly.FieldNumber(0), "degrees");
+        this.appendStatementInput("Shape")
+            .setCheck(null);
+        this.setInputsInline(true);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(65);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
 Blockly.Blocks['blokscad_polygon'] = {
     init: function() {
         this.appendDummyInput()
