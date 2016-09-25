@@ -13,6 +13,7 @@
 //     http://openjscad.org/
 //
 // History:
+// 2016/06/27: 0.5.1: incrementing version number for release
 // 2016/05/01: 0.5.0: added options to Processor and View classes, allow more flexibility in HTML by Z3 Dev
 // 2016/02/02: 0.4.0: GUI refactored, functionality split up into more files, mostly done by Z3 Dev
 // 2015/05/20: 0.2.4: renumbering to 0.024 -> 0.2.4
@@ -76,7 +77,7 @@
 // }
 
 function version() {
-  return [0,5,0];
+  return [0,5,1];
 }
 
 function JStoMeta(src) {
@@ -339,9 +340,13 @@ function union() {
 function difference() { 
    var o,i=0,a=arguments; 
    if(a[0].length) a = a[0]; 
-   for(o=a[i++]; i<a.length; i++) { 
-      o = o.subtract(a[i].setColor(1,1,0));     // -- color the cuts
-   } 
+   for(o=a[i++]; i<a.length; i++) {
+      if (a[i] instanceof CAG) {
+        o = o.subtract(a[i]);
+      } else {
+        o = o.subtract(a[i].setColor(1,1,0));     // -- color the cuts
+      }
+   }
    return o; 
 }
 
@@ -349,8 +354,12 @@ function intersection() {
    var o,i=0,a=arguments; 
    if(a[0].length) a = a[0]; 
    for(o=a[i++]; i<a.length; i++) { 
-      o = o.intersect(a[i].setColor(1,1,0));    // -- color the cuts
-   } 
+      if (a[i] instanceof CAG) {
+        o = o.intersect(a[i]);
+      } else {
+        o = o.intersect(a[i].setColor(1,1,0));     // -- color the cuts
+      }
+   }
    return o; 
 }
 
@@ -590,9 +599,9 @@ function torus(p) {
 }
 
 function polyhedron(p) { 
-   //console.log("polyhedron() not yet implemented"); 
    var pgs = [];
    var ref = p.triangles||p.polygons;
+   var colors = p.colors||null;
    
    for(var i=0; i<ref.length; i++) {
       var pp = []; 
@@ -602,15 +611,15 @@ function polyhedron(p) {
 
       var v = [];
       for(j=ref[i].length-1; j>=0; j--) {       // --- we reverse order for examples of OpenSCAD work
-      //for(var j=0; j<ref[i].length-1; j++) {
          v.push(new CSG.Vertex(new CSG.Vector3D(pp[j][0],pp[j][1],pp[j][2])));
       }
-      pgs.push(new CSG.Polygon(v));
+      var s = CSG.Polygon.defaultShared;
+      if (colors && colors[i]) {
+         s = CSG.Polygon.Shared.fromColor(colors[i]);
+      }
+      pgs.push(new CSG.Polygon(v,s));
    }
    var r = CSG.fromPolygons(pgs);
-   //r.properties.polyhedron = new CSG.Properties();
-   //r.properties.polyhedron.center = new CSG.Vector3D(center);
-   //r.properties.sphere.facepoint = center.plus(xvector);
    return r;   
 }
    
@@ -1894,136 +1903,6 @@ var simplexFont = [
 
 // --------------------------------------------------------------------------------------------
 
-function parseAMF(amf,fn) {      // http://en.wikipedia.org/wiki/Additive_Manufacturing_File_Format
-   var xml, err = '';            // http://api.jquery.com/category/traversing/
-   try {
-      xml = $.parseXML(amf);
-   } catch(e) {
-      echo("XML parsing error:",e.message.substring(0,120)+"..");
-      err += "XML parsing error / invalid XML";
-   }
-   var v = [];    // vertices
-   var f = [];    // faces
-   //var c = [];    // color settings (per face)
-   var nv = 0, np = 0;
-   var src = '', srci = '';
-
-   srci = "\tvar pgs = [];\n";
-
-   var meta = [];
-   var metatag = $(xml).find('metadata');    // -- extract metadata
-   metatag.each(function() {
-      var el = $(this);
-      meta[el.attr('type')] = el.text();
-   });
-   
-   var obj = $(xml).find('object');
-   obj.each(function() {
-      var el = $(this);
-      var mesh = el.find('mesh');
-      mesh.each(function() {
-         var el = $(this);
-         var c = [];
-         var co = el.find('color');
-         var rgbm = [];
-         if(co.length) {
-            rgbm = [co.find('r').first().text(), co.find('g').first().text(), co.find('b').first().text()];
-            if(co.find('a').length) rgbm = rgbm.concat(co.find('a').first().text());
-         }
-         v = []; f = []; nv = 0;        // we create each individual polygon
-         
-         var vertices = el.find('vertices');
-         var sn = nv;
-         vertices.each(function() {
-            var el = $(this);
-            var vertex = el.find('vertex');
-            vertex.each(function() {
-               var el = $(this);
-               var x = el.find('x').text();
-               var y = el.find('y').text();
-               var z = el.find('z').text();
-               v.push([x,y,z]);
-               nv++;
-            });
-         });
-         var volume = el.find('volume');
-         volume.each(function() {
-            var el = $(this);
-            var rgbv = [], co = el.find('color');
-            if(co.length) {
-               rgbv = [co.find('r').first().text(), co.find('g').first().text(), co.find('b').first().text()];
-               if(co.find('a').length) rgbv = rgbv.concat(co.find('a').first().text());
-            }
-            var triangle = el.find('triangle');
-            triangle.each(function() {
-               var el = $(this);
-               var rgbt = [], co = el.find('color');
-               if(co.length) {
-                  rgbt = [co.find('r').first().text(), co.find('g').first().text(), co.find('b').first().text()];
-                  if(co.find('a').length) rgbt = rgbt.concat(co.find('a').first().text());
-               }
-               var v1 = parseInt(el.find('v1').first().text()); // -- why: v1 might occur <v1>1</v1><map><v1>0</v1></map> -> find('v1') return '1'+'0' = '10'
-               var v2 = parseInt(el.find('v2').first().text());
-               var v3 = parseInt(el.find('v3').first().text());
-               if(rgbm.length||rgbv.length||rgbt.length) 
-                  c[f.length] = rgbt.length?rgbt:(rgbv.length?rgbv:rgbm);
-               f.push([v1+sn,v2+sn,v3+sn]);        // HINT: reverse order for polyhedron()
-
-               var maps = el.find('map');
-               maps.each(function() {
-                  ;        // not yet
-               });
-            });
-         });
-         var textures = el.find('texture');
-         textures.each(function() {
-            ; // not yet
-         });
-         
-         // v[] has the vertices
-         // f[] has the faces
-         for(var i=0; i<f.length; i++) {
-            //srci += "\tpgs.push(new CSG.Polygon([\n\t\t";
-            srci += "\tpgs.push(PP([\n\t\t";
-            for(var j=0; j<f[i].length; j++) {
-               if(f[i][j]<0||f[i][j]>=v.length) {
-                  if(err.length=='') err += "bad index for vertice (out of range)";
-                  continue;
-               }
-               if(j) srci += ",\n\t\t";
-               //srci += "<!-- "+v+","+f+" -->";
-               //srci += "<!-- "+f[i]+":"+v.length+":"+v[f[i]]+" -->";
-               //srci += "new CSG.Vertex(new CSG.Vector3D("+v[f[i][j]]+"))";
-               srci += "VV("+v[f[i][j]]+")";
-            }
-            srci += "])";
-            if(c[i]) srci += ".setColor("+c[i]+")";
-            srci += ");\n";
-            np++;
-         }
-      });
-   });
-   var src = "";
-   for(var k in meta) {
-      src += "// AMF."+k+": "+meta[k]+"\n";
-   }
-   src += "// producer: OpenJSCAD Compatibility ("+version().join('.')+") AMF Importer\n";
-   src += "// date: "+(new Date())+"\n";
-   src += "// source: "+fn+"\n";
-   src += "\n";
-   
-   if(err) src += "// WARNING: import errors: "+err+" (some triangles might be misaligned or missing)\n";
-   src += "// objects: 1\n// object #1: polygons: "+np+"\n\n";
-   src += "function main() {\n"; 
-   src += "\tvar PP = function(a) { return new CSG.Polygon(a); }\n"; 
-   src += "\tvar VV = function(x,y,z) { return new CSG.Vertex(new CSG.Vector3D(x,y,z)); }\n";
-   //src += vt2jscad(v,f,[],c);
-   src += srci;
-   src += "\treturn CSG.fromPolygons(pgs);\n}\n";
-   return src;
-}
-   
-
 function parseOBJ(obj,fn) {   // http://en.wikipedia.org/wiki/Wavefront_.obj_file
    var l = obj.split(/\n/);
    var v = [], f = [];
@@ -2101,14 +1980,54 @@ function parseBinarySTL(stl,fn) {
     var vertices = [];
     var triangles = [];
     var normals = [];
+    var colors = [];
     var vertexIndex = 0;
     var converted = 0;
     var err = 0;
+    var mcolor = null;
+    var umask = parseInt('01000000000000000',2);
+    var rmask = parseInt('00000000000011111',2);
+    var gmask = parseInt('00000001111100000',2);
+    var bmask = parseInt('00111110000000000',2);
     var br = new BinaryReader(stl);
-    
-    br.seek(80); //Skip header
-    //for(var i=0; i<80; i++) 
-    //   br.readInt8();
+
+    var m=0,c=0,r=0,g=0,b=0,a=0;
+    for(var i=0; i<80; i++) {
+        switch (m) {
+        case 6:
+            r = br.readUInt8();
+            m +=1;
+            continue;
+        case 7:
+            g = br.readUInt8();
+            m +=1;
+        continue;
+             case 8:
+            b = br.readUInt8();
+            m +=1;
+            continue;
+        case 9:
+            a = br.readUInt8();
+            m +=1;
+            continue;
+        default:
+            c = br.readChar();
+            switch (c) {
+            case 'C':
+            case 'O':
+            case 'L':
+            case 'R':
+            case '=':
+                m += 1;
+            default:
+                break;
+            }
+            break;
+        }
+    }
+    if (m == 10) { // create the default color
+        mcolor = [r/255,g/255,b/255,a/255];
+    }
       
     var totalTriangles = br.readUInt32(); //Read # triangles
 
@@ -2144,7 +2063,21 @@ function parseBinarySTL(stl,fn) {
         // -- every 3 vertices create a triangle.
         var triangle = []; triangle.push(vertexIndex++); triangle.push(vertexIndex++); triangle.push(vertexIndex++);
 
-        br.readUInt16();
+        var abc = br.readUInt16();
+        var color = null;
+        if (m == 10) {
+          var u = (abc & umask); // 0 if color is unique for this triangle
+          var r = (abc & rmask) / 31;
+          var g = ((abc & gmask) >>> 5) / 31;
+          var b = ((abc & bmask) >>> 10) / 31;
+          var a = 255;
+          if (u == 0) {
+            color = [r,g,b,a];
+          } else {
+            color = mcolor;
+          }
+          colors.push(color);
+        }
 
         // -- Add 3 vertices for every triangle
         // -- TODO: OPTIMIZE: Check if the vertex is already in the array, if it is just reuse the index
@@ -2180,7 +2113,7 @@ function parseBinarySTL(stl,fn) {
    if(err) src += "// WARNING: import errors: "+err+" (some triangles might be misaligned or missing)\n";
    src += "// objects: 1\n// object #1: triangles: "+totalTriangles+"\n\n";
    src += "function main() { return "; 
-   src += vt2jscad(vertices,triangles,normals);
+   src += vt2jscad(vertices,triangles,normals,colors);
    src += "; }";
    return src;
 }
@@ -2307,9 +2240,15 @@ function vt2jscad(v,t,n,c) {     // vertices, triangles, normals and colors
       if(j++) src += ",\n\t";
       src += "["+t[i]+"]"; //.join(', ');
    }
+   if (c && t.length == c.length) {
+     src += "],\n\tcolors: [\n\t";
+     for(var i=0,j=0; i<c.length; i++) {
+        if(j++) src += ",\n\t";
+        src += "["+c[i]+"]"; //.join(', ');
+     }
+   }
    src += "] })\n";
    return src;
-   //return polyhedron({points:vertices, triangles: triangles});
 }
 
 // BinaryReader
@@ -2761,7 +2700,6 @@ if(typeof module !== 'undefined') {    // we are used as module in nodejs requir
     // -- list all functions we export
     version: version,
     parseSTL: parseSTL,
-    parseAMF: parseAMF,
     parseOBJ: parseOBJ,
     parseGCode: parseGCode,
     color:color, group:group, union:union, 

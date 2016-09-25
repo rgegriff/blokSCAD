@@ -69,23 +69,16 @@ Todo:
     <script src="js/ui-cookies.js?0.5.0" charset="utf-8"></script>
     <script src="js/ui-worker.js?0.5.0" charset="utf-8"></script>
     <script src="js/index.js?0.5.0" charset="utf-8"></script>
-    <script src="blockly-master/blockly_compressed.js"></script>
+    <script src="blockly-master/blockly_uncompressed.js"></script>
     <script src="blockly-master/blocks_compressed.js"></script>
-    <script src="blockly-master/javascript_compressed.js"></script>
+    <script src="blockly-master/generators/javascript.js"></script>
+    <script src="blockly-master/generators/javascript/lists.js"></script>
+    <script src="blockly-master/generators/javascript/math.js"></script>
     <script src="blokscad_blocks.js"></script>
+
     <script src="blokscad_generators.js"></script>
     <script src="blockly-master/msg/js/en.js"></script>
-    <xml id="toolbox" style="display: none">
-      <block type="controls_if"></block>
-      <block type="controls_repeat_ext"></block>
-      <block type="logic_compare"></block>
-      <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
-      <block type="text"></block>
-      <block type="text_print"></block>
-      <block type="blokscad_square"></block>
-      <block type="blokscad_union"></block>
-    </xml>
+
 <!-- top left header (logo and error message) -->
     <div id="header">
       <img src="imgs/title.png">
@@ -172,7 +165,9 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
       <div>
         <img id="editHandle" src="imgs/editHandleIn.png" />
       </div>
-      <div id="editor-blockly" style="display:block;height:100%;width:100%;">
+        <div id="blocklyArea" style="position:absolute;width: 100%;height:100%;">
+            <div id="editor-blockly" style="position:absolute;width: 100%;height:100%"></div>
+        </div>
       </div>
     </div>
 <!-- editor -->
@@ -215,10 +210,12 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
     <div id="footer">
       OpenJSCAD.org <script>document.write(OpenJsCad.version);</script>, MIT License, get your own copy/clone/fork from <a target=_blank href="https://github.com/Spiritdude/OpenJSCAD.org">GitHub: OpenJSCAD</a>
     </div>
+    <script src="toolbox.xml.js"></script>
 <script>
-  var blocklyDiv = document.getElementById('editor-blockly');
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('editor-blockly');
   workspace = Blockly.inject(blocklyDiv,
-          {toolbox: document.getElementById('toolbox'),
+          {toolbox: toolbox_xml,
             grid:
             {spacing: 20,
               length: 3,
@@ -232,6 +229,39 @@ Get your copy/clone/fork from <a href="https://github.com/Spiritdude/OpenJSCAD.o
               minScale: 0.3,
               scaleSpeed: 1.2},
             trashcan: true});
+  var onresize = function(e) {
+      // Compute the absolute coordinates and dimensions of blocklyArea.
+      var element = blocklyArea;
+      var x = 0;
+      var y = 0;
+      do {
+          x += element.offsetLeft;
+          y += element.offsetTop;
+          element = element.offsetParent;
+      } while (element);
+      // Position blocklyDiv over blocklyArea.
+      blocklyDiv.style.left = 0 + 'px';
+      blocklyDiv.style.top = 0 + 'px';
+      blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+  };
+  window.addEventListener('resize', onresize, false);
+  onresize();
+
+  function workspaceUpdated(event) {
+      var code = Blockly.JavaScript.workspaceToCode(workspace);
+      console.log(code);
+      gProcessor.setJsCad("function main(){return " + code + ";}\n")
+
+
+  }
+  workspace.addChangeListener(workspaceUpdated);
+
+  $("#editHandle").click(function(){
+      var blockly_tb_div = $(".blocklyToolboxDiv");
+      blockly_tb_div.toggle();
+      onresize();
+  });
 </script>
   </body>
 </html>

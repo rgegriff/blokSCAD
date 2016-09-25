@@ -35,6 +35,9 @@ $(document).ready(function() {
     $("#menu").height($(window).height());       // initial height
 
     $('#editFrame').height($(window).height());
+    $('#blocklyArea').height($(window).height());
+    $('#editFrame').width($(window).width()*.4);
+    $('#blocklyArea').width($(window).width()*.4)
     $(window).resize(function() {                // adjust the relevant divs
         $("#menu").height($(window).height());
         $("#menuHandle").css({top: '45%'});
@@ -49,7 +52,7 @@ $(document).ready(function() {
 
     $("#editHandle").click(function() {
         if ($("#editFrame").width() == 0) {
-          $("#editFrame").css("width",'60%');
+          $("#editFrame").css("width",'40%');
           $("#editHandle").attr('src',"imgs/editHandleIn.png");
         } else {
           $("#editFrame").css("width",'0px');

@@ -54,9 +54,10 @@ OpenJsCad.env = function() {
 OpenJsCad.Viewer = function(containerelement) {
 // see the various methods below on how to change these
   this.camera = {
-    fov: 45,                           // field of view
-    angle:    {x: -60,y:  0,z:  -45},  // view angle about XYZ axis
-    position: {x:   0,y:  0,z:  100},  // initial position at XYZ
+    fov: 60,                           // field of view
+    angle:    {x: 0,y:  0,z:  0},  // view angle about XYZ axis
+    position: {x: 0,y:  0,z:  100},  // initial position at XYZ
+
     clip:     {min: 0.5,  max: 1000},  // rendering outside this range is clipped
   };
   this.plate = {
@@ -74,7 +75,7 @@ OpenJsCad.Viewer = function(containerelement) {
     },
   };
   this.axis = {
-    draw: false,                // draw or not
+    draw: true,                // draw or not
     x: {
       neg: {r: 1, g: .5, b: .5, a: .5}, // color in negative direction
       pos: {r: 1, g:  0, b:  0, a: .8}, // color in positive direction
@@ -108,6 +109,7 @@ OpenJsCad.Viewer = function(containerelement) {
   this.gl.matrixMode(this.gl.PROJECTION);
   this.gl.loadIdentity();
   this.gl.perspective(this.camera.fov, this.gl.canvas.width / this.gl.canvas.height, this.camera.clip.min, this.camera.clip.max);
+  //this.gl.ortho(-500,500,500,500,this.camera.clip.min, this.camera.clip.max);
   this.gl.matrixMode(this.gl.MODELVIEW);
 
   this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
@@ -317,6 +319,17 @@ OpenJsCad.Viewer.prototype = {
     this.viewpointX = this.camera.position.x;
     this.viewpointY = this.camera.position.y;
     this.viewpointZ = this.camera.position.z;
+    this.onDraw();
+  },
+
+  snapViewToTop: function(){
+    this.angleX = 0;
+    this.angleY = 0;
+    this.angleZ = 0;
+    // Hack to make things work a little better for demos
+    this.viewpointX = -45;
+    this.viewpointY = 0;
+    this.viewpointZ = 200;
     this.onDraw();
   },
 
