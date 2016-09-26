@@ -16,14 +16,11 @@ Blockly.JavaScript['blokscad_square'] = function(block) {
 };
 
 Blockly.JavaScript['blokscad_circle'] = function(block) {
-    var number_radius = block.getFieldValue('radius');
     var value_radius = Blockly.JavaScript.valueToCode(block, 'radius', Blockly.JavaScript.ORDER_ATOMIC);
-    var checkbox_center = block.getFieldValue('center') == 'TRUE';
     var value_center = Blockly.JavaScript.valueToCode(block, 'center', Blockly.JavaScript.ORDER_ATOMIC);
-    var radius = value_radius == ""? number_radius : value_radius;
-    var center = value_center == ""? checkbox_center : value_center;
     // TODO: Assemble JavaScript into code variable
-    return 'circle({r:'+ radius +', center:'+ center + '});\n';
+    var code = 'circle({r:'+ value_radius +', center:'+ value_center + '})';
+    return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
 Blockly.JavaScript['blokscad_union'] = function(block) {
@@ -129,21 +126,17 @@ Blockly.JavaScript['blokscad_rotate2d'] = function(block) {
 Blockly.JavaScript['blokscad_polygon'] = function(block) {
     var value_points = Blockly.JavaScript.valueToCode(block, 'POINTS', Blockly.JavaScript.ORDER_ATOMIC);
     // TODO: Assemble JavaScript into code variable.
-    var code = 'polygon(' + value_points + ');\n';
-    return code;
+    var code = 'polygon(' + value_points + ')';
+    return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
 Blockly.JavaScript['blokscad_polygon_point'] = function(block) {
-    var number_x = block.getFieldValue('X');
     var value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
-    var number_y = block.getFieldValue('Y');
     var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
 
     //Collect whichever variable the user has set
-    var x = value_x == ""? number_x : value_x;
-    var y = value_y == ""? number_y : value_y;
     // TODO: Assemble JavaScript into code variable.
-    var code = JSON.stringify([x,y]);
+    var code = "["+value_x+","+value_y+"]";
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
@@ -158,8 +151,8 @@ Blockly.JavaScript['blokscad_sphere'] = function(block) {
     var centered = value_centered == ""? checkbox_centered : value_centered;
 
     // TODO: Assemble JavaScript into code variable.
-    var options = {r: radius, center: centered};
-    var code = 'sphere(' + JSON.stringify(options) + ')';
+    var options = "{r: "+radius+", center:"+centered+"}";
+    var code = 'sphere(' + options + ')';
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
@@ -170,26 +163,9 @@ Blockly.JavaScript['blokscad_box'] = function(block) {
     var value_height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC);
     var value_centered = Blockly.JavaScript.valueToCode(block, 'CENTERED', Blockly.JavaScript.ORDER_ATOMIC);
     value_centered = value_centered == "true";
-    var options = {size: [value_width, value_depth, value_height], center:value_centered};
-    options = JSON.stringify(options);
+    var options = "{size: ["+value_width+", "+value_depth+","+value_height+"], center:"+value_centered+"}";
     // TODO: Assemble JavaScript into code variable.
     var code = 'cube('+ options +')';
-    // TODO: Change ORDER_NONE to the correct strength.
-    return [code, Blockly.JavaScript.ORDER_NONE];
-};
-
-Blockly.JavaScript['blokscad_cube'] = function(block) {
-    var number_radius = block.getFieldValue('RADIUS');
-    var value_radius = Blockly.JavaScript.valueToCode(block, 'RADIUS', Blockly.JavaScript.ORDER_ATOMIC);
-    var checkbox_centered = block.getFieldValue('CENTERED') == 'TRUE';
-    var value_centered = Blockly.JavaScript.valueToCode(block, 'CENTERED', Blockly.JavaScript.ORDER_ATOMIC);
-
-    var radius = value_radius == ""? number_radius : value_radius;
-    var centered = value_centered == ""? checkbox_centered : value_centered;
-
-    // TODO: Assemble JavaScript into code variable.
-    var options = {r: radius, center: centered};
-    var code = 'sphere(' + JSON.stringify(options) + ')';
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
@@ -205,17 +181,25 @@ Blockly.JavaScript['blokscad_difference_new'] = function(block) {
 };
 
 Blockly.JavaScript['blokscad_union_new'] = function(block) {
-    var value_to_union = Blockly.JavaScript.valueToCode(block, 'TO_UNION', Blockly.JavaScript.ORDER_ATOMIC);
+    var elements = new Array(block.itemCount_);
+    for (var i = 0; i < block.itemCount_; i++) {
+        elements[i] = Blockly.JavaScript.valueToCode(block, 'ADD' + i,
+                Blockly.JavaScript.ORDER_COMMA) || 'null';
+    }
     // TODO: Assemble JavaScript into code variable.
-    var code = 'union(' + value_to_union + ')';
+    var code = 'union(' + elements.join(", ") + ')';
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
 Blockly.JavaScript['blokscad_intersect_new'] = function(block) {
-    var value_to_intersect = Blockly.JavaScript.valueToCode(block, 'TO_INTERSECT', Blockly.JavaScript.ORDER_ATOMIC);
+    var elements = new Array(block.itemCount_);
+    for (var i = 0; i < block.itemCount_; i++) {
+        elements[i] = Blockly.JavaScript.valueToCode(block, 'ADD' + i,
+                Blockly.JavaScript.ORDER_COMMA) || 'null';
+    }
     // TODO: Assemble JavaScript into code variable.
-    var code = 'intersection(' + value_to_intersect + ')';
+    var code = 'intersection(' + elements.join(", ") + ')';
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };

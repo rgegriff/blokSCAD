@@ -8,19 +8,15 @@ Blockly.Blocks['blokscad_square'] = {
         this.appendValueInput("width")
             .setCheck("Number")
             .appendField("Square")
-            .appendField("width")
-            .appendField(new Blockly.FieldNumber(0), "width");
+            .appendField("width");
         this.appendValueInput("height")
             .setCheck("Number")
-            .appendField("height")
-            .appendField(new Blockly.FieldNumber(0), "height");
+            .appendField("height");
         this.appendValueInput("center")
             .setCheck("Boolean")
-            .appendField("Centered?")
-            .appendField(new Blockly.FieldCheckbox("FALSE"), "center");
+            .appendField("Centered");
         this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
+        this.setOutput(true, "Shape");
         this.setColour(210);
         this.setTooltip('The Square, Circle\'s greatest enemy.');
         this.setHelpUrl('http://www.example.com/');
@@ -32,15 +28,12 @@ Blockly.Blocks['blokscad_circle'] = {
         this.appendValueInput("radius")
             .setCheck("Number")
             .appendField("Circle")
-            .appendField("radius")
-            .appendField(new Blockly.FieldNumber(0), "radius");
+            .appendField("radius");
         this.appendValueInput("center")
             .setCheck("Boolean")
-            .appendField("Centered?")
-            .appendField(new Blockly.FieldCheckbox("FALSE"), "center");
+            .appendField("Centered");
         this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
+        this.setOutput(true, "Shape");
         this.setColour(210);
         this.setTooltip('Circle Loves Turtles');
         this.setHelpUrl('http://www.example.com/');
@@ -173,8 +166,7 @@ Blockly.Blocks['blokscad_polygon'] = {
             .setCheck("Array")
             .appendField("Point List");
         this.setInputsInline(false);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
+        this.setOutput(true, "Shape");
         this.setColour(65);
         this.setTooltip('');
         this.setHelpUrl('http://www.example.com/');
@@ -207,10 +199,10 @@ Blockly.Blocks['blokscad_sphere'] = {
             .appendField("Sphere");
         this.appendValueInput("RADIUS")
             .setCheck("Number")
-            .appendField("Radius")
+            .appendField("Radius");
         this.appendValueInput("CENTERED")
             .setCheck("Boolean")
-            .appendField("Center")
+            .appendField("Center");
         this.setInputsInline(true);
         this.setOutput(true, "Shape");
         this.setColour(330);
@@ -231,6 +223,7 @@ Blockly.Blocks['blokscad_create_with_item'] = {
         this.setColour(Blockly.Blocks.lists.HUE);
         this.setPreviousStatement(true);
         this.setNextStatement(true);
+        this.appendDummyInput().appendField("Shape");
         this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_ITEM_TOOLTIP);
         this.contextMenu = false;
     }
@@ -244,7 +237,7 @@ Blockly.Blocks['blokscad_create_with_container'] = {
     init: function() {
         this.setColour(Blockly.Blocks.lists.HUE);
         this.appendDummyInput()
-            .appendField(Blockly.Msg.LISTS_CREATE_WITH_CONTAINER_TITLE_ADD);
+            .appendField("Shapes");
         this.appendStatementInput('STACK');
         this.setTooltip(Blockly.Msg.LISTS_CREATE_WITH_CONTAINER_TOOLTIP);
         this.contextMenu = false;
@@ -255,9 +248,9 @@ Blockly.Blocks['blokscad_union_new'] = {
     init: function() {
         this.appendDummyInput()
             .appendField("Union");
-        this.appendValueInput("TO_UNION")
-            .setCheck(["Array", "Shape"]);
         this.setInputsInline(false);
+        this.itemCount_= 2;
+        this.updateShape_();
         this.setOutput(true, "Shape");
         this.setColour(0);
         this.setTooltip('');
@@ -355,14 +348,14 @@ Blockly.Blocks['blokscad_union_new'] = {
       this.removeInput('EMPTY');
     } else if (!this.itemCount_ && !this.getInput('EMPTY')) {
       this.appendDummyInput('EMPTY')
-          .appendField(Blockly.Msg.LISTS_CREATE_EMPTY_TITLE);
+          .appendField("use option menu on this block to add slots");
     }
     // Add new inputs.
     for (var i = 0; i < this.itemCount_; i++) {
       if (!this.getInput('ADD' + i)) {
         var input = this.appendValueInput('ADD' + i);
         if (i == 0) {
-          input.appendField(Blockly.Msg.LISTS_CREATE_WITH_INPUT_WITH);
+          input.appendField("Shapes");
         }
       }
     }
