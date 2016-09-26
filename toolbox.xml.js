@@ -113,15 +113,78 @@ var toolbox_xml = "\
     </category>\
     \
     <category name=\"3D Shapes\" colour=\"200\">\
-        <block type=\"blokscad_sphere\" disabled=\"true\"></block>\
+        <block type=\"blokscad_sphere\" disabled=\"false\">\
+          <value name=\"RADIUS\">\
+            <block type=\"math_number\"><field name=\"NUM\">1</field></block>\
+          </value>\
+          <value name=\"CENTERED\">\
+            <block type=\"logic_boolean\"><field name=\"BOOL\">false</field></block>\
+          </value>\
+        </block>\
+        \
+        <block type=\"blokscad_box\">\
+          <value name=\"WIDTH\">\
+            <block type=\"math_number\"><field name=\"NUM\">1</field></block>\
+          </value>\
+         <value name=\"DEPTH\">\
+           <block type=\"math_number\"><field name=\"NUM\">1</field></block>\
+         </value>\
+         <value name=\"HEIGHT\">\
+           <block type=\"math_number\"><field name=\"NUM\">1</field></block>\
+         </value>\
+         <value name=\"CENTERED\">\
+           <block type=\"logic_boolean\"><field name=\"BOOL\">false</field></block>\
+         </value>\
+        </block>\
     </category>\
     <category name=\"Transforms\" colour=\"200\">\
-      <block type=\"blokscad_union\"></block>\
-      <block type=\"blokscad_difference\"></block>\
-      <block type=\"blokscad_intersection\"></block>\
+      <block type=\"blokscad_union\" disabled=\"true\"></block>\
+      <block type=\"blokscad_difference\" disabled=\"true\"></block>\
+      <block type=\"blokscad_intersection\" disabled=\"true\"></block>\
       <sep gap=\"34\"></sep>\
       <block type=\"blokscad_translate3d\" disabled=\"true\"></block>\
-      <block type=\"blokscad_translate2d\"></block>\
-      <block type=\"blokscad_rotate2d\"></block>\
+      <block type=\"blokscad_translate2d\" disabled=\"true\"></block>\
+      <block type=\"blokscad_rotate2d\" disabled=\"true\"></block>\
+      \
+    </category>\
+    \
+    <category name=\"New Transforms\" colour=\"0\">\
+      <block type=\"blokscad_union_new\"></block>\
+      <block type=\"blokscad_difference_new\"></block>\
+      <block type=\"blokscad_translate3d_new\">\
+          <value name=\"X\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+          <value name=\"Y\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+          <value name=\"Z\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+      </block>\
+      <block type=\"blokscad_rotate3d_new\">\
+          <value name=\"X\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+          <value name=\"Y\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+          <value name=\"Z\">\
+            <block type=\"math_number\">\
+              <field name=\"NUM\">0</field>\
+            </block>\
+          </value>\
+      </block>\
+      <block type=\"blokscad_intersect_new\"></block>\
     </category>\
 </xml>"

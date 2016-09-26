@@ -163,3 +163,88 @@ Blockly.JavaScript['blokscad_sphere'] = function(block) {
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
+
+Blockly.JavaScript['blokscad_box'] = function(block) {
+    var value_width = Blockly.JavaScript.valueToCode(block, 'WIDTH', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_depth = Blockly.JavaScript.valueToCode(block, 'DEPTH', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_height = Blockly.JavaScript.valueToCode(block, 'HEIGHT', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_centered = Blockly.JavaScript.valueToCode(block, 'CENTERED', Blockly.JavaScript.ORDER_ATOMIC);
+    value_centered = value_centered == "true";
+    var options = {size: [value_width, value_depth, value_height], center:value_centered};
+    options = JSON.stringify(options);
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'cube('+ options +')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['blokscad_cube'] = function(block) {
+    var number_radius = block.getFieldValue('RADIUS');
+    var value_radius = Blockly.JavaScript.valueToCode(block, 'RADIUS', Blockly.JavaScript.ORDER_ATOMIC);
+    var checkbox_centered = block.getFieldValue('CENTERED') == 'TRUE';
+    var value_centered = Blockly.JavaScript.valueToCode(block, 'CENTERED', Blockly.JavaScript.ORDER_ATOMIC);
+
+    var radius = value_radius == ""? number_radius : value_radius;
+    var centered = value_centered == ""? checkbox_centered : value_centered;
+
+    // TODO: Assemble JavaScript into code variable.
+    var options = {r: radius, center: centered};
+    var code = 'sphere(' + JSON.stringify(options) + ')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+// New transforms
+Blockly.JavaScript['blokscad_difference_new'] = function(block) {
+    var subtrahend = Blockly.JavaScript.valueToCode(block, 'SUBTRAHEND', Blockly.JavaScript.ORDER_ATOMIC);
+    var minuend = Blockly.JavaScript.valueToCode(block, 'MINUEND', Blockly.JavaScript.ORDER_ATOMIC);
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'difference(' + subtrahend + ', ' + minuend + ')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['blokscad_union_new'] = function(block) {
+    var value_to_union = Blockly.JavaScript.valueToCode(block, 'TO_UNION', Blockly.JavaScript.ORDER_ATOMIC);
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'union(' + value_to_union + ')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['blokscad_intersect_new'] = function(block) {
+    var value_to_intersect = Blockly.JavaScript.valueToCode(block, 'TO_INTERSECT', Blockly.JavaScript.ORDER_ATOMIC);
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'intersection(' + value_to_intersect + ')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['blokscad_translate3d_new'] = function(block) {
+    var value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC);
+
+    var translation_vect = '['+value_x+', '+value_y+', '+value_z+']';
+    var value_to_translate = Blockly.JavaScript.valueToCode(block, 'TO_TRANSLATE', Blockly.JavaScript.ORDER_ATOMIC);
+
+
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'translate('+ translation_vect +', '+ value_to_translate +')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};
+
+Blockly.JavaScript['blokscad_rotate3d_new'] = function(block) {
+    var value_x = Blockly.JavaScript.valueToCode(block, 'X', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_y = Blockly.JavaScript.valueToCode(block, 'Y', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_z = Blockly.JavaScript.valueToCode(block, 'Z', Blockly.JavaScript.ORDER_ATOMIC);
+    var value_to_rotate = Blockly.JavaScript.valueToCode(block, 'TO_ROTATE', Blockly.JavaScript.ORDER_ATOMIC);
+
+    var rotation_vect = "[" + value_x + ", " + value_y +", "+ value_z +"]";
+
+    // TODO: Assemble JavaScript into code variable.
+    var code = 'rotate('+rotation_vect+','+value_to_rotate+')';
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, Blockly.JavaScript.ORDER_NONE];
+};

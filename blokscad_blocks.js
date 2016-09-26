@@ -208,11 +208,9 @@ Blockly.Blocks['blokscad_sphere'] = {
         this.appendValueInput("RADIUS")
             .setCheck("Number")
             .appendField("Radius")
-            .appendField(new Blockly.FieldNumber(0), "RADIUS");
         this.appendValueInput("CENTERED")
             .setCheck("Boolean")
             .appendField("Center")
-            .appendField(new Blockly.FieldCheckbox("TRUE"), "CENTERED");
         this.setInputsInline(true);
         this.setOutput(true, "Shape");
         this.setColour(330);
@@ -220,3 +218,135 @@ Blockly.Blocks['blokscad_sphere'] = {
         this.setHelpUrl('http://www.example.com/');
     }
 };
+
+
+// New Transforms
+
+Blockly.Blocks['blokscad_union_new'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Union");
+        this.appendValueInput("TO_UNION")
+            .setCheck(["Array", "Shape"]);
+        this.setInputsInline(false);
+        this.setOutput(true, "Shape");
+        this.setColour(0);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.Blocks['blokscad_intersect_new'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Intersection");
+        this.appendValueInput("TO_INTERSECT")
+            .setCheck(["Array", "Shape"]);
+        this.setInputsInline(false);
+        this.setOutput(true, "Shape");
+        this.setColour(0);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.Blocks['blokscad_difference_new'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Difference");
+        this.appendValueInput("SUBTRAHEND")
+            .appendField("Subtrahend")
+            .setCheck(["Array", "Shape"]);
+        this.appendValueInput("MINUEND")
+            .appendField("Minuend")
+            .setCheck(["Array", "Shape"]);
+        this.setInputsInline(false);
+        this.setOutput(true, "Shape");
+        this.setColour(0);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.Blocks['blokscad_translate3d_new'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Translate 3D");
+        this.appendValueInput("X")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("X");
+        this.appendValueInput("Y")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Y");
+        this.appendValueInput("Z")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Z");
+        this.appendValueInput("TO_TRANSLATE")
+            .setCheck("Shape")
+            .appendField("Shape");
+        this.setOutput(true, "Shape");
+        this.setColour(0);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+Blockly.Blocks['blokscad_rotate3d_new'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Rotate 3D");
+        this.appendValueInput("X")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("X")
+        this.appendValueInput("Y")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Y")
+        this.appendValueInput("Z")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Z")
+        this.appendValueInput("TO_ROTATE")
+            .setCheck("Shape")
+            .appendField("Shape");
+        this.setInputsInline(false);
+        this.setOutput(true, "Shape");
+        this.setColour(0);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
+
+Blockly.Blocks['blokscad_box'] = {
+    init: function() {
+        this.appendDummyInput()
+            .appendField("Box");
+        this.appendValueInput("WIDTH")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Width");
+        this.appendValueInput("DEPTH")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Depth");
+        this.appendValueInput("HEIGHT")
+            .setCheck("Number")
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Height");
+        this.appendValueInput("CENTERED")
+            .setCheck(null)
+            .setAlign(Blockly.ALIGN_RIGHT)
+            .appendField("Centered");
+        this.setInputsInline(true);
+        this.setOutput(true, "Shape");
+        this.setColour(330);
+        this.setTooltip('');
+        this.setHelpUrl('http://www.example.com/');
+    }
+};
+
